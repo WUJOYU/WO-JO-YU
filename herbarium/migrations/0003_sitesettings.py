@@ -1,0 +1,5 @@
+from django.db import migrations, models
+
+class Migration(migrations.Migration):
+    dependencies = [('herbarium','0002_powo_identification_history')]
+    operations = [migrations.CreateModel(name='SiteSettings', fields=[('id',models.BigAutoField(auto_created=True,primary_key=True,serialize=False,verbose_name='ID')),('site_title',models.CharField(default='TCF Digital Herbarium',max_length=160,verbose_name='網站名稱')),('site_subtitle',models.CharField(default='Forest Herbarium · National Chung Hsing University',max_length=250,verbose_name='網站副標題')),('hero_title',models.CharField(default='Documenting plant diversity, one specimen at a time.',max_length=250,verbose_name='首頁主標題')),('hero_description',models.TextField(default='A living archive of botanical collections, research and biodiversity.',verbose_name='首頁介紹')),('hero_image',models.ImageField(blank=True,upload_to='site/',verbose_name='首頁圖片')),('hero_image_credit',models.CharField(blank=True,max_length=300,verbose_name='圖片來源／授權')),('updated_at',models.DateTimeField(auto_now=True))],options={'verbose_name':'網站設定','verbose_name_plural':'網站設定'})]

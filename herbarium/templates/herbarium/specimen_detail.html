@@ -1,0 +1,203 @@
+
+{% extends 'herbarium/base.html' %}
+{% load botanical_names %}
+
+{% block title %}{{ specimen.barcode }} · TCF{% endblock %}
+
+{% block content %}
+
+<div class="breadcrumbs">
+    <a href="{% url 'specimens' %}">Specimens</a>
+    / {{ specimen.barcode|default:'Specimen record' }}
+</div>
+
+<section class="detail-head">
+    <p class="eyebrow">TCF HERBARIUM / SPECIMEN RECORD</p>
+
+    <h1>
+        {{ specimen.collecting_event.taxon.display_accepted_name|default:'Identification pending'|botanical_name }}
+    </h1>
+
+    <p class="vernacular">
+        {{ specimen.barcode|default:'Barcode pending' }}
+        ·
+        {{ specimen.collecting_event.taxon.family|default:'Family unverified' }}
+    </p>
+</section>
+
+<div class="detail-layout">
+
+    <div>
+
+        <section class="detail-panel">
+            <h2>Collection information</h2>
+
+            <dl>
+                <dt>Institution</dt>
+                <dd>TCF · National Chung Hsing University</dd>
+
+                <dt>Barcode</dt>
+                <dd>{{ specimen.barcode|default:'—' }}</dd>
+
+                <dt>Collector</dt>
+                <dd>{{ specimen.collecting_event.collector|default:'—' }}</dd>
+
+                <dt>Collector number</dt>
+                <dd>{{ specimen.collecting_event.collecting_number|default:'—' }}</dd>
+
+                <dt>Collection date</dt>
+                <dd>{{ specimen.collecting_event.collection_date_text|default:'—' }}</dd>
+
+                <dt>Locality</dt>
+                <dd>{{ specimen.collecting_event.locality|default:'—' }}</dd>
+
+                <dt>Habitat</dt>
+                <dd>{{ specimen.collecting_event.habitat|default:'—' }}</dd>
+
+                <dt>Preparation</dt>
+                <dd>{{ specimen.preparation_type|default:'—' }}</dd>
+
+                <dt>Digitisation status</dt>
+                <dd>{{ specimen.get_status_display }}</dd>
+            </dl>
+
+            <p class="small-help">
+                Exact geographic coordinates are not displayed publicly.
+            </p>
+
+            {% if specimen.public_notes %}
+                <h3>Public notes</h3>
+                <p>{{ specimen.public_notes|linebreaksbr }}</p>
+            {% endif %}
+        </section>
+
+        <section class="detail-panel">
+            <h2>Type status / 模式標本</h2>
+
+            {% for t in type_designations %}
+                <div class="history-entry">
+                    <strong>{{ t.get_type_status_display }}</strong>
+
+                    <p>
+                        Type name:
+                        {{ t.type_name|botanical_name }}
+                    </p>
+
+                    {% if t.original_publication %}
+                        <p>
+                            Protologue:
+                            {{ t.original_publication }}
+                        </p>
+                    {% endif %}
+
+                    {% if t.designation_reference %}
+                        <p>
+                            Designation:
+                            {{ t.designation_reference }}
+                        </p>
+                    {% endif %}
+
+                    {% if t.related_type_barcode %}
+                        <p>
+                            Related type:
+                            {{ t.related_type_barcode }}
+                        </p>
+                    {% endif %}
+
+                    {% if t.evidence_url %}
+                        <p>
+                            <a href="{{ t.evidence_url }}"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Evidence reference
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>
+                    No verified public type designation recorded.
+                </p>
+            {% endfor %}
+        </section>
+
+        <section class="detail-panel">
+            <h2>Identification history</h2>
+
+            <p class="small-help">
+                Identification history is undergoing curator review.
+                Historical determinations will be published after
+                their public-release status has been confirmed.
+            </p>
+
+            <p>
+                No identification history is currently available
+                for public display.
+            </p>
+        </section>
+
+    </div>
+
+    <div>
+
+        <section class="detail-panel">
+            <h2>Specimen images</h2>
+
+            {% for m in images %}
+                {% if m.image %}
+                    <figure>
+                        <a href="{{ m.image.url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            <img
+                                class="detail-image"
+                                src="{{ m.image.url }}"
+                                alt="{{ m.caption|default:'TCF herbarium specimen' }}"
+                                loading="lazy"
+                            >
+                        </a>
+
+                        <figcaption>
+                            {% if m.caption %}
+                                {{ m.caption }}
+                            {% endif %}
+
+                            {% if m.credit %}
+                                <p>Credit: {{ m.credit }}</p>
+                            {% endif %}
+                        </figcaption>
+                    </figure>
+                {% endif %}
+            {% empty %}
+                <p>No public images yet.</p>
+            {% endfor %}
+        </section>
+
+        <section class="detail-panel">
+            <h2>Taxonomic reference</h2>
+
+            <p>
+                {{ specimen.collecting_event.taxon.display_accepted_name|default:'Identification pending'|botanical_name }}
+            </p>
+
+            <p class="small-help">
+                POWO verification status:
+                {{ specimen.collecting_event.taxon.get_taxonomic_status_display|default:'Not checked' }}
+            </p>
+
+            {% if specimen.collecting_event.taxon.powo_url %}
+                <p>
+                    <a href="{{ specimen.collecting_event.taxon.powo_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View Plants of the World Online
+                    </a>
+                </p>
+            {% endif %}
+        </section>
+
+    </div>
+
+</div>
+
+{% endblock %}

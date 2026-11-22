@@ -1,0 +1,52 @@
+﻿[
+    {
+        "taxon__family":  "Ranunculaceae",
+        "taxon__scientific_name":  "Clematis chinensis var. tatushanensis",
+        "collecting_number":  "336"
+    },
+    {
+        "taxon__family":  "Acanthaceae",
+        "taxon__scientific_name":  "Justicia procumbens var. procumbens",
+        "collecting_number":  "337"
+    },
+    {
+        "taxon__family":  "Urticaceae",
+        "taxon__scientific_name":  "Pilea plataniflora",
+        "collecting_number":  "338"
+    },
+    {
+        "taxon__family":  "Pteridaceae",
+        "taxon__scientific_name":  "Aleuritopteris formosana",
+        "collecting_number":  "339"
+    },
+    {
+        "taxon__family":  "Aspleniaceae",
+        "taxon__scientific_name":  "Asplenium tripteropus",
+        "collecting_number":  "340"
+    },
+    {
+        "taxon__family":  "Acanthaceae",
+        "taxon__scientific_name":  "Justicia procumbens var. procumbens",
+        "collecting_number":  "341"
+    },
+    {
+        "taxon__family":  "Gesneriaceae",
+        "taxon__scientific_name":  "Conandron ramondioides",
+        "collecting_number":  "342"
+    },
+    {
+        "taxon__family":  "Asteraceae",
+        "taxon__scientific_name":  "Eupatorium fortunei Turcz.",
+        "collecting_number":  "343"
+    },
+    {
+        "taxon__family":  "Piperaceae",
+        "taxon__scientific_name":  "Peperomia dindygulensis",
+        "collecting_number":  "344"
+    },
+    {
+        "taxon__family":  "Begoniaceae",
+        "taxon__scientific_name":  "Begonia chitoensis",
+        "collecting_number":  "345"
+    }
+]

@@ -1,0 +1,1 @@
+{% extends 'herbarium/base.html' %}{% block title %}Curator Login｜TCF Digital Herbarium{% endblock %}{% block content %}<section class="login-card"><p class="eyebrow">CURATOR PORTAL</p><h1>管理者登入</h1><form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">登入</button></form><p class="small-note">僅授權管理者可進入典藏管理後台。</p></section>{% endblock %}

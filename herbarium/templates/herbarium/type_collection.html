@@ -1,0 +1,5 @@
+{% extends 'herbarium/base.html' %}{% load botanical_names %}{% block title %}Type collections · TCF{% endblock %}{% block content %}
+<section class="page-intro"><p class="eyebrow">NOMENCLATURAL TYPES</p><h1>Type collections</h1><p>Verified and approved type designations only. Type names remain independent of POWO accepted names.</p></section>
+<form method="get" class="detail-panel"><label>Search type name or barcode <input name="q" value="{{ q }}"></label><label>Type status <select name="status"><option value="">All</option>{% for value,label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label><button type="submit">Search</button></form>
+<section class="detail-panel"><h2>{{ result_count }} type designations</h2>{% for t in types %}<div class="history-entry"><strong><a href="{% url 'specimen_detail' t.specimen.pk %}">{{ t.type_name|botanical_name }}</a></strong><p>{{ t.get_type_status_display }} · {{ t.specimen.barcode }}</p></div>{% empty %}<p>No verified public type specimens yet.</p>{% endfor %}</section>
+{% endblock %}

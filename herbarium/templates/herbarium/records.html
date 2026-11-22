@@ -1,0 +1,50 @@
+{% extends 'herbarium/base.html' %}
+{% load botanical_names %}
+{% block title %}採集紀錄｜TCF Digital Herbarium{% endblock %}
+{% block content %}
+<section class="page-intro">
+  <p class="eyebrow">COLLECTION EVENTS</p>
+  <h1>採集紀錄 <em>Collection Records</em></h1>
+  <p>搜尋已公開的來源採集紀錄。採集紀錄不等於已確認入藏的實體標本。</p>
+</section>
+<form class="searchbar" method="get" action="{% url 'records' %}">
+  <input name="q" value="{{ q }}" aria-label="搜尋採集紀錄" placeholder="搜尋學名、科名、採集者、採集號或地點…">
+  <select name="family" aria-label="依科名篩選">
+    <option value="">所有科名</option>
+    {% for f in families %}<option value="{{ f }}" {% if family == f %}selected{% endif %}>{{ f }}</option>{% endfor %}
+  </select>
+  <button type="submit">搜尋</button>
+</form>
+<p class="result-count">找到 {{ result_count }} 筆公開紀錄{% if page_obj.paginator.num_pages > 1 %} · 第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 頁{% endif %}</p>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>採集號</th><th>學名／中文名</th><th>科名</th><th>採集者</th><th>日期</th><th>採集地</th><th></th></tr></thead>
+    <tbody>
+      {% for e in records %}
+      <tr>
+        <td class="mono">{{ e.collecting_number|default:'—' }}</td>
+        <td><strong>{{ e.taxon.scientific_name|default:'學名待補'|botanical_name }}</strong><small>{{ e.vernacular_name_source }}</small></td>
+        <td>{{ e.taxon.family|default:'—' }}</td>
+        <td>{{ e.collector|default:'—'|truncatechars:28 }}</td>
+        <td>{{ e.collection_date_text|default:'—' }}</td>
+        <td>{{ e.locality|default:'—'|truncatechars:38 }}</td>
+        <td><a href="{% url 'record_detail' e.pk %}">查看 →</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="empty">目前沒有符合條件的公開紀錄。</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="tcf-pagination" aria-label="採集紀錄分頁">
+  {% if page_obj.has_previous %}
+    <a href="?q={{ q|urlencode }}&amp;family={{ family|urlencode }}&amp;page={{ page_obj.previous_page_number }}">← 上一頁</a>
+  {% endif %}
+  <span>第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 頁</span>
+  {% if page_obj.has_next %}
+    <a href="?q={{ q|urlencode }}&amp;family={{ family|urlencode }}&amp;page={{ page_obj.next_page_number }}">下一頁 →</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

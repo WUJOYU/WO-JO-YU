@@ -1,0 +1,16 @@
+﻿.env
+.env.*
+*.sqlite3
+*.sqlite3-*
+data/
+__pycache__/
+*.pyc
+.git/
+.vscode/
+*.log
+*.xlsx
+*.xls
+*.csv
+*_backup*/
+
+site_backup.css

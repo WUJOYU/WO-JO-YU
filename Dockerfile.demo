@@ -1,0 +1,19 @@
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+COPY requirements-demo.txt /app/
+RUN pip install --no-cache-dir -r requirements-demo.txt
+COPY config/ /app/config/
+COPY herbarium/ /app/herbarium/
+COPY manage.py /app/manage.py
+# Demo-only safe routes and approved preview templates
+COPY urls_demo_safe.py /app/config/urls_demo.py
+COPY home_preview.html /app/herbarium/templates/herbarium/home.html
+COPY records_preview.html /app/herbarium/templates/herbarium/records.html
+COPY record_detail_preview.html /app/herbarium/templates/herbarium/record_detail.html
+COPY base_preview.html /app/herbarium/templates/herbarium/base.html
+COPY specimens_preview.html /app/herbarium/templates/herbarium/specimens.html
+COPY about_data_preview.html /app/herbarium/templates/herbarium/about_data.html
+RUN DJANGO_SECRET_KEY=build-only python manage.py collectstatic --noinput --settings=config.settings_demo
+EXPOSE 8010
+CMD ["sh", "-c", "python manage.py migrate --noinput --settings=config.settings_demo && gunicorn config.wsgi:application --bind 0.0.0.0:8010 --workers 2 --env DJANGO_SETTINGS_MODULE=config.settings_demo"]

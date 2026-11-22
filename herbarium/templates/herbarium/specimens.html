@@ -1,0 +1,303 @@
+
+{% extends 'herbarium/base.html' %}
+{% load botanical_names %}
+
+{% block title %}Explore specimens · TCF{% endblock %}
+
+{% block content %}
+
+<section class="page-intro">
+    <p class="eyebrow">EXPLORE / 標本探索</p>
+    <h1>Specimen catalogue</h1>
+    <p>
+        Search verified physical specimens.
+        Records remain private until approved by a Curator.
+    </p>
+</section>
+
+<div class="explore-layout">
+
+    <!-- SEARCH FILTERS -->
+    <aside class="filters">
+        <h2>Refine results</h2>
+
+        <form method="get" action="{% url 'specimens' %}">
+
+            <label>
+                Search
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ q }}"
+                    placeholder="Name, collector, barcode"
+                >
+            </label>
+
+            <label>
+                Family
+                <select name="family">
+                    <option value="">All families</option>
+                    {% for f in families %}
+                        <option value="{{ f }}"
+                            {% if f == family %}selected{% endif %}>
+                            {{ f }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>
+                Digitisation
+                <select name="status">
+                    <option value="">All verified specimens</option>
+                    <option value="verified"
+                        {% if status == 'verified' %}selected{% endif %}>
+                        Verified
+                    </option>
+                    <option value="digitised"
+                        {% if status == 'digitised' %}selected{% endif %}>
+                        Digitised
+                    </option>
+                </select>
+            </label>
+
+            <label>
+                Public image
+                <select name="images">
+                    <option value="">All</option>
+                    <option value="yes"
+                        {% if images_filter == 'yes' %}selected{% endif %}>
+                        Image available
+                    </option>
+                </select>
+            </label>
+
+            <label>
+                <input
+                    type="checkbox"
+                    name="types"
+                    value="yes"
+                    {% if type_filter == 'yes' %}checked{% endif %}
+                >
+                Verified type specimens only
+            </label>
+
+            <input type="hidden" name="view" value="{{ view }}">
+
+            <button class="filter-submit" type="submit">
+                Apply filters
+            </button>
+
+        </form>
+
+        <p class="small-help">
+            Sensitive locality coordinates are not displayed publicly.
+        </p>
+    </aside>
+
+    <!-- SEARCH RESULTS -->
+    <section class="explore-results">
+
+        <div class="results-toolbar">
+
+            <div>
+                <strong>{{ result_count }} specimens</strong>
+                <small>
+                    Only physically verified, approved records
+                </small>
+            </div>
+
+            <!-- TABLE / GALLERY SWITCH -->
+            <div class="view-switch">
+
+                <a
+                    class="{% if view == 'table' %}selected{% endif %}"
+                    href="?q={{ q|urlencode }}&amp;family={{ family|urlencode }}&amp;status={{ status|urlencode }}&amp;images={{ images_filter|urlencode }}&amp;types={{ type_filter|urlencode }}&amp;view=table"
+                >
+                    Table
+                </a>
+
+                <a
+                    class="{% if view == 'gallery' %}selected{% endif %}"
+                    href="?q={{ q|urlencode }}&amp;family={{ family|urlencode }}&amp;status={{ status|urlencode }}&amp;images={{ images_filter|urlencode }}&amp;types={{ type_filter|urlencode }}&amp;view=gallery"
+                >
+                    Gallery
+                </a>
+
+            </div>
+        </div>
+
+        <!-- GALLERY VIEW -->
+        {% if view == 'gallery' %}
+
+            <div class="catalog-gallery">
+
+                {% for s in specimens %}
+
+                    <a
+                        class="catalog-card"
+                        href="{% url 'specimen_detail' s.pk %}"
+                    >
+
+                        <div class="catalog-image">
+
+                            {% for m in s.media.all %}
+
+                                {% if m.is_public and m.image %}
+
+                                    {% if forloop.first %}
+                                        <img
+                                            src="{{ m.image.url }}"
+                                            alt="{{ m.caption|default:'Herbarium specimen image' }}"
+                                            loading="lazy"
+                                        >
+                                    {% endif %}
+
+                                {% endif %}
+
+                            {% empty %}
+
+                                <span>No public image</span>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="catalog-card-body">
+
+                            <small>
+                                {{ s.barcode|default:'Unassigned barcode' }}
+                            </small>
+
+                            <h3>
+                                {{ s.collecting_event.taxon.display_accepted_name|default:'Identification pending'|botanical_name }}
+                            </h3>
+
+                            <p>
+                                {{ s.collecting_event.collector|default:'Collector not recorded' }}
+                            </p>
+
+                        </div>
+
+                    </a>
+
+                {% empty %}
+
+                    <p class="empty-state">
+                        No public specimens match these filters.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+        <!-- TABLE VIEW -->
+        {% else %}
+
+            <div class="catalog-table-wrap">
+
+                <table class="catalog-table">
+
+                    <thead>
+                        <tr>
+                            <th>Barcode</th>
+                            <th>Scientific name / POWO status</th>
+                            <th>Collector</th>
+                            <th>Family</th>
+                            <th>Digitisation</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for s in specimens %}
+
+                            <tr>
+
+                                <td>
+                                    <a href="{% url 'specimen_detail' s.pk %}">
+                                        {{ s.barcode|default:'—' }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    {{ s.collecting_event.taxon.display_accepted_name|default:'Pending'|botanical_name }}
+
+                                    <small>
+                                        {{ s.collecting_event.taxon.get_taxonomic_status_display|default:'Not checked' }}
+                                    </small>
+                                </td>
+
+                                <td>
+                                    {{ s.collecting_event.collector|default:'—' }}
+                                </td>
+
+                                <td>
+                                    {{ s.collecting_event.taxon.family|default:'—' }}
+                                </td>
+
+                                <td>
+                                    {{ s.get_status_display }}
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+                                <td colspan="5">
+                                    No public specimens match these filters.
+                                    Physical specimens must be verified before publication.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% endif %}
+
+        <!-- PAGINATION -->
+        {% if page_obj.has_other_pages %}
+
+            <nav class="pagination" aria-label="Specimen pagination">
+
+                {% if page_obj.has_previous %}
+
+                    <a href="?q={{ q|urlencode }}&amp;family={{ family|urlencode }}&amp;status={{ status|urlencode }}&amp;images={{ images_filter|urlencode }}&amp;types={{ type_filter|urlencode }}&amp;view={{ view }}&amp;page={{ page_obj.previous_page_number }}">
+                        ← Previous
+                    </a>
+
+                {% endif %}
+
+                <span>
+                    Page {{ page_obj.number }} of
+                    {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+
+                    <a href="?q={{ q|urlencode }}&amp;family={{ family|urlencode }}&amp;status={{ status|urlencode }}&amp;images={{ images_filter|urlencode }}&amp;types={{ type_filter|urlencode }}&amp;view={{ view }}&amp;page={{ page_obj.next_page_number }}">
+                        Next →
+                    </a>
+
+                {% endif %}
+
+            </nav>
+
+        {% endif %}
+
+        <p class="small-help">
+            Showing up to 24 specimens per page.
+            Only verified and approved records are publicly accessible.
+        </p>
+
+    </section>
+
+</div>
+
+{% endblock %}

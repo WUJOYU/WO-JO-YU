@@ -1,0 +1,221 @@
+{% load static %}
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description"
+          content="TCF Digital Herbarium — Botanical collections and biodiversity research at National Chung Hsing University">
+
+    <title>
+        {% block title %}TCF Digital Herbarium{% endblock %}
+    </title>
+
+    <!-- Existing site stylesheet -->
+    <link rel="stylesheet"
+          href="{% static 'herbarium/site.css' %}">
+
+    <!-- Navy Blue × Sage Green theme overrides -->
+    <style>
+        :root {
+            --tcf-navy: #263D55;
+            --tcf-navy-dark: #192F44;
+            --tcf-sage: #78958B;
+            --tcf-sage-light: #E7EDE9;
+            --tcf-ivory: #FAFAF7;
+            --tcf-white: #FFFFFF;
+            --tcf-text: #263D55;
+            --tcf-muted: #60747B;
+            --tcf-border: #D8E1DC;
+        }
+
+        body {
+            background: var(--tcf-ivory);
+            color: var(--tcf-text);
+        }
+
+        /* Global navigation */
+        .site-header {
+            background: var(--tcf-white);
+            border-bottom: 1px solid var(--tcf-border);
+        }
+
+        .site-header .brand {
+            color: var(--tcf-navy);
+            text-decoration: none;
+        }
+
+        .site-header .brand-mark {
+            color: var(--tcf-navy);
+            border-color: var(--tcf-sage);
+        }
+
+        .site-header .brand strong {
+            color: var(--tcf-navy);
+        }
+
+        .site-header .brand small {
+            color: var(--tcf-muted);
+        }
+
+        .site-header nav a {
+            color: var(--tcf-navy);
+            text-decoration: none;
+            transition: color .2s ease;
+        }
+
+        .site-header nav a:hover {
+            color: #526F65;
+        }
+
+        .site-header nav .nav-admin {
+            border: 1px solid var(--tcf-border);
+            background: var(--tcf-ivory);
+            color: var(--tcf-navy);
+        }
+
+        .site-header nav .nav-admin:hover {
+            background: var(--tcf-sage-light);
+        }
+
+        /* Shared buttons */
+        .button.primary {
+            background: var(--tcf-navy);
+            border-color: var(--tcf-navy);
+            color: white;
+        }
+
+        .button.primary:hover {
+            background: var(--tcf-navy-dark);
+        }
+
+        .button.secondary {
+            color: var(--tcf-navy);
+            border-color: var(--tcf-sage);
+        }
+
+        /* Shared links */
+        .text-link {
+            color: var(--tcf-navy);
+        }
+
+        /* Shared headings */
+        h1, h2, h3 {
+            color: var(--tcf-navy);
+        }
+
+        /* Shared card style */
+        .record-card {
+            background: var(--tcf-white);
+            border-color: var(--tcf-border);
+        }
+
+        .record-card h3 {
+            color: var(--tcf-navy);
+        }
+
+        /* Footer */
+        footer {
+            background: #F0F3F0;
+            border-top: 1px solid var(--tcf-border);
+            color: var(--tcf-muted);
+        }
+
+        footer strong {
+            color: var(--tcf-navy);
+        }
+
+        /* Keyboard accessibility */
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--tcf-sage);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .site-header nav a {
+                transition: none;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Site navigation -->
+    <header class="site-header">
+
+        <a class="brand" href="{% url 'home' %}">
+
+            <span class="brand-mark">TCF</span>
+
+            <span>
+                <strong>
+                    {{ site_config.site_title|default:"Digital Herbarium" }}
+                </strong>
+
+                <small>
+                    {{ site_config.site_subtitle|default:"FOREST HERBARIUM · NATIONAL CHUNG HSING UNIVERSITY" }}
+                </small>
+            </span>
+
+        </a>
+
+        <nav aria-label="Main navigation">
+
+            <a href="{% url 'records' %}">
+                採集紀錄 Records
+            </a>
+
+            <a href="{% url 'specimens' %}">
+                Specimens 標本
+            </a>
+
+            <a href="{% url 'taxonomy' %}">
+                Taxonomy 分類
+            </a>
+
+            <a href="{% url 'darwin_core_export' %}">
+                Darwin Core CSV
+            </a>
+
+            <a class="nav-admin" href="/admin/">
+                Curator Portal ↗
+            </a>
+
+            <a href="{% url 'type_collection' %}">
+                Type collections
+            </a>
+
+        </nav>
+
+    </header>
+
+    <!-- Page content -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+
+        <div>
+            <strong>TCF Digital Herbarium</strong>
+
+            <p>
+                Academic collection information portal ·
+                National Chung Hsing University
+            </p>
+        </div>
+
+        <span>
+            資料來源與典藏狀態以館方核對結果為準。
+        </span>
+
+    </footer>
+
+</body>
+</html>
